@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: events-prisma-deployment
+  labels:
+    app: events-prisma
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: events-prisma
+  template:
+    metadata:
+      labels:
+        app: events-prisma 
+    spec:
+      containers:
+      - name: events-prisma
+        image: postgres:13
+        imagePullPolicy: "IfNotPresent"
+        ports:
+        - containerPort: 5432
+        env: 
+        - name: POSTGRES_USER
+          valueFrom: 
+            secretKeyRef: 
+              name: gss-secret
+              key: prisma-username
+        - name: POSTGRES_PASSWORD
+          valueFrom: 
+            secretKeyRef: 
+              name: gss-secret
+              key: prisma-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: events-prisma-service
+spec:
+  selector:
+    app: events-prisma
+  ports:
+    - protocol: TCP
+      port: 81
+      targetPort: 5432
+  volumes:
+    - name: postgres-data
+      persistentVolumeClaim:
+        claimName: postgres-pv-claim
+      restartPolicy: Always
+

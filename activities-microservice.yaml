@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: activities-microservice-deployment
+  labels:
+    app: activities-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: activities-microservice
+  template:
+    metadata:
+      labels:
+        app: activities-microservice 
+    spec:
+      containers:
+      - name: activities-microservice
+        image: juliepetrova/activities-microservice:v1.1
+        ports:
+        - containerPort: 3000
+        env: 
+        - name: POSTGRES_USER
+          valueFrom: 
+            secretKeyRef: 
+              name: gss-secret
+              key: prisma-username
+        - name: POSTGRES_PASSWORD
+          valueFrom: 
+            secretKeyRef: 
+              name: gss-secret
+              key: prisma-password
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: gss-config
+              key: activities-db-url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: activities-microservice-service
+spec:
+  type: ClusterIP
+  selector:
+    app: activities-microservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+

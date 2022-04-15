@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gss-config
+data:
+  activities-db-url: activities-prisma-service
+  calendar-db-url: calendar-prisma-service
+  events-db-url: events-prisma-service
