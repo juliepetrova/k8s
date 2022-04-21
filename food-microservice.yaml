@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foodapi-microservice-deployment
+  labels:
+    app: foodapi-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: foodapi-microservice
+  template:
+    metadata:
+      labels:
+        app: foodapi-microservice 
+    spec:
+      containers:
+      - name: foodapi-microservice
+        image: juliepetrova/food-microservice:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3006
+        env: 
+        - name: APP_KEY
+          valueFrom: 
+            secretKeyRef: 
+              name: gss-secret
+              key: food-app-key
+        - name: APP_ID
+          valueFrom: 
+            secretKeyRef: 
+              name: gss-secret
+              key: food-app-id
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: foodapi-microservice-service
+spec:
+  type: ClusterIP
+  selector:
+    app: foodapi-microservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3006
+

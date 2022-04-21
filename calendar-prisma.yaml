@@ -30,7 +30,16 @@ spec:
           valueFrom: 
             secretKeyRef: 
               name: gss-secret
-              key: prisma-password
+              key: calendar-microservice-db-password
+        - name: POSTGRES_DB
+          value: calendar_db
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres-data
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-pv-claim
 ---
 apiVersion: v1
 kind: Service
@@ -41,11 +50,6 @@ spec:
     app: calendar-prisma
   ports:
     - protocol: TCP
-      port: 82
+      port: 5433
       targetPort: 5432
-  volumes:
-    - name: postgres-data
-      persistentVolumeClaim:
-        claimName: postgres-pv-claim
-      restartPolicy: Always
 

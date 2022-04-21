@@ -16,25 +16,32 @@ spec:
     spec:
       containers:
       - name: events-microservice
-        image: juliepetrova/events-microservice:v1.1
+        image: juliepetrova/events-microservice:latest
+        command: [ 'npx', 'prisma', 'migrate', 'deploy' ]
+        imagePullPolicy: Always
         ports:
         - containerPort: 3002
         env: 
-        - name: POSTGRES_USER
+        # - name: POSTGRES_USER
+        #   valueFrom: 
+        #     secretKeyRef: 
+        #       name: gss-secret
+        #       key: prisma-username
+        # - name: POSTGRES_PASSWORD
+        #   valueFrom: 
+        #     secretKeyRef: 
+        #       name: gss-secret
+        #       key: prisma-password
+        # - name: POSTGRES_DB
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: gss-config
+        #       key: events-db-url
+        - name: DATABASE_URL
           valueFrom: 
-            secretKeyRef: 
+            secretKeyRef:
               name: gss-secret
-              key: prisma-username
-        - name: POSTGRES_PASSWORD
-          valueFrom: 
-            secretKeyRef: 
-              name: gss-secret
-              key: prisma-password
-        - name: POSTGRES_DB
-          valueFrom:
-            configMapKeyRef:
-              name: gss-config
-              key: events-db-url
+              key: events-database-url
 ---
 apiVersion: v1
 kind: Service

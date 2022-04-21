@@ -31,6 +31,15 @@ spec:
             secretKeyRef: 
               name: gss-secret
               key: prisma-password
+        - name: POSTGRES_DB
+          value: events_db
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres-data
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-pv-claim
 ---
 apiVersion: v1
 kind: Service
@@ -41,11 +50,5 @@ spec:
     app: events-prisma
   ports:
     - protocol: TCP
-      port: 81
+      port: 5434
       targetPort: 5432
-  volumes:
-    - name: postgres-data
-      persistentVolumeClaim:
-        claimName: postgres-pv-claim
-      restartPolicy: Always
-
