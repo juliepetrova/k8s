@@ -50,5 +50,5 @@ spec:
     app: events-prisma
   ports:
     - protocol: TCP
-      port: 5434
+      port: 5432
       targetPort: 5432

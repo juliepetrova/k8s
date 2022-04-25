@@ -28,40 +28,22 @@ spec:
             name: foodapi-microservice-service
             port:
               number: 80
-  # - host: gss.info
-  #   http:
-  #     paths:
-  #     - path: /events
-  #       pathType: Prefix
-  #       backend:
-  #         service:
-  #           name: events-microservice-service
-  #           port:
-  #             number: 81
-  # - http:
-  #     paths:
-  #     - path: /calendar
-  #       pathType: Prefix
-  #       backend:
-  #         service:
-  #           name: calendar-microservice-service
-  #           port:
-  #             number: 82
-  # - http:
-  #     paths:
-  #     - path: /client
-  #       pathType: Prefix
-  #       backend:
-  #         service:
-  #           name: frontend-client-service
-  #           port:
-  #             number: 80
-  # - http:
-  #     paths:
-  #     - path: /admin
-  #       pathType: Prefix
-  #       backend:
-  #         service:
-  #           name: frontend-admin-service
-  #           port:
-  #             number: 8080
+  - host: gss.info
+    http:
+      paths:
+      - path: /events(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: events-microservice-service
+            port:
+              number: 80
+  - http:
+      paths:
+      - path: /calendar
+        pathType: Prefix
+        backend:
+          service:
+            name: calendar-microservice-service
+            port:
+              number: 80

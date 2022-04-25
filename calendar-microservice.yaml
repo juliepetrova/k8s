@@ -18,7 +18,7 @@ spec:
       - name: calendar-microservice
         image: juliepetrova/calendar-microservice:latest
         imagePullPolicy: Always
-        command: [ 'npx', 'prisma', 'migrate', 'deploy' ]
+        # command: [ 'npx', 'prisma', 'migrate', 'deploy' ]
         ports:
         - containerPort: 3001
         env: 
@@ -31,7 +31,7 @@ spec:
           valueFrom: 
             secretKeyRef: 
               name: gss-secret
-              key: calendar-microservice-db-password
+              key: prisma-password
         - name: POSTGRES_DB
           valueFrom:
             configMapKeyRef:
@@ -53,6 +53,6 @@ spec:
     app: calendar-microservice
   ports:
     - protocol: TCP
-      port: 82
+      port: 80
       targetPort: 3001
 
