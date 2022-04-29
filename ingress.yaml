@@ -5,6 +5,10 @@ metadata:
   annotations:
     # nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/auth-url: http://user-microservice-service.default.svc.cluster.local:80/auth
+    ingress.kubernetes.io/enable-cors: "true"
+
+
 spec:
   # ingressClassName: nginx
   rules:
@@ -38,12 +42,23 @@ spec:
             name: events-microservice-service
             port:
               number: 80
-  - http:
+  - host: gss.info
+    http:
       paths:
-      - path: /calendar
+      - path: /calendar(/|$)(.*)
         pathType: Prefix
         backend:
           service:
             name: calendar-microservice-service
+            port:
+              number: 80
+  - host: gss.info
+    http:
+      paths:
+      - path: /users(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: user-microservice-service
             port:
               number: 80
