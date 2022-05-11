@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reservation-microservice-deployment
+  namespace: postgres-operator
+  labels:
+    app: reservation-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reservation-microservice
+  template:
+    metadata:
+      labels:
+        app: reservation-microservice
+    spec:
+      containers:
+      - name: reservation-microservice
+        image: juliepetrova/reservations-microservice:latest
+        command: [ 'npx', 'prisma', 'migrate', 'deploy' ]
+        # resources:
+        #   requests:
+        #     memory: "64Mi"
+        #     cpu: "100m"
+        #   limits:
+        #     memory: "128Mi"
+        #     cpu: "200m"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3005
+        env: 
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: reservations-postgres-pguser-reservations-postgres
+              key: user
+        - name: POSTGRES_HOST
+          valueFrom:
+            secretKeyRef:
+              name: reservations-postgres-pguser-reservations-postgres
+              key: host
+        - name: POSTGRES_PORT
+          valueFrom:
+            secretKeyRef:
+              name: reservations-postgres-pguser-reservations-postgres
+              key: port
+        - name: POSTGRES_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: reservations-postgres-pguser-reservations-postgres
+              key: dbname
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: reservations-postgres-pguser-reservations-postgres
+              key: uri
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: reservations-postgres-pguser-reservations-postgres
+              key: password
+        - name: RABBITMQ_CONN_URL
+          valueFrom: 
+            secretKeyRef:
+              name: gss-secret
+              key: RABBITMQ_CONN_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reservation-microservice-service
+spec:
+  type: ClusterIP
+  selector:
+    app: reservation-microservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3005
+

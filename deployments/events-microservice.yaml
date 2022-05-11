@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: events-microservice-deployment
+  namespace: postgres-operator
+  labels:
+    app: events-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: events-microservice
+  template:
+    metadata:
+      labels:
+        app: events-microservice 
+    spec:
+      containers:
+      - name: events-microservice
+        image: juliepetrova/events-microservice:latest
+        # command: [ 'npx', 'prisma', 'migrate', 'deploy' ]
+        # resources:
+        #   requests:
+        #     memory: "64Mi"
+        #     cpu: "100m"
+        #   limits:
+        #     memory: "128Mi"
+        #     cpu: "200m"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3002
+        env: 
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: events-postgres-pguser-events-postgres
+              key: user
+        - name: POSTGRES_HOST
+          valueFrom:
+            secretKeyRef:
+              name: events-postgres-pguser-events-postgres
+              key: host
+        - name: POSTGRES_PORT
+          valueFrom:
+            secretKeyRef:
+              name: events-postgres-pguser-events-postgres
+              key: port
+        - name: POSTGRES_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: events-postgres-pguser-events-postgres
+              key: dbname
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: events-postgres-pguser-events-postgres
+              key: uri
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: events-postgres-pguser-events-postgres
+              key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: events-microservice-service
+spec:
+  type: ClusterIP
+  selector:
+    app: events-microservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3002

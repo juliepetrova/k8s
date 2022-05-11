@@ -1,0 +1,7 @@
+namespace: postgres-operator
+
+resources:
+- activities-prisma.yaml
+- calendar-prisma.yaml
+- events-prisma.yaml
+- reservations-prisma.yaml

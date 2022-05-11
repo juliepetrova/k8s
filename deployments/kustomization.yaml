@@ -1,0 +1,9 @@
+namespace: postgres-operator
+
+resources:
+- activities-microservice.yaml
+- calendar-microservice.yaml
+- events-microservice.yaml
+- food-microservice.yaml
+- reservation-microservice.yaml
+- user-microservice.yaml

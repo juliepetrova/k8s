@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: foodapi-microservice-deployment
+  namespace: postgres-operator
   labels:
     app: foodapi-microservice
 spec:
@@ -17,6 +18,13 @@ spec:
       containers:
       - name: foodapi-microservice
         image: juliepetrova/food-microservice:latest
+        # resources:
+        #   requests:
+        #     memory: "64Mi"
+        #     cpu: "100m"
+        #   limits:
+        #     memory: "128Mi"
+        #     cpu: "200m"
         imagePullPolicy: Always
         ports:
         - containerPort: 3006

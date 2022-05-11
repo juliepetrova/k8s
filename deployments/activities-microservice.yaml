@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: activities-microservice-deployment
+  namespace: postgres-operator
+  labels:
+    app: activities-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: activities-microservice
+  template:
+    metadata:
+      labels:
+        app: activities-microservice 
+    spec:
+      containers:
+      - name: activities-microservice
+        image: juliepetrova/activities-microservice:latest
+        # resources:
+        #   requests:
+        #     memory: "64Mi"
+        #     cpu: "100m"
+        #   limits:
+        #     memory: "128Mi"
+        #     cpu: "200m"
+        # command: [ 'npx', 'prisma', 'migrate', 'deploy' ]
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env: 
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: activities-postgres-pguser-activities-postgres
+              key: user
+        - name: POSTGRES_HOST
+          valueFrom:
+            secretKeyRef:
+              name: activities-postgres-pguser-activities-postgres
+              key: host
+        - name: POSTGRES_PORT
+          valueFrom:
+            secretKeyRef:
+              name: activities-postgres-pguser-activities-postgres
+              key: port
+        - name: POSTGRES_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: activities-postgres-pguser-activities-postgres
+              key: dbname
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: activities-postgres-pguser-activities-postgres
+              key: uri
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: activities-postgres-pguser-activities-postgres
+              key: password
+        - name: RABBITMQ_CONN_URL
+          valueFrom: 
+            secretKeyRef:
+              name: gss-secret
+              key: RABBITMQ_CONN_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: activities-microservice-service
+spec:
+  type: ClusterIP
+  selector:
+    app: activities-microservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+
