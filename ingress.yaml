@@ -6,7 +6,11 @@ metadata:
     # nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/auth-url: http://user-microservice-service.default.svc.cluster.local:80/auth
-    ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Access-Control-Allow-Origin: $http_origin";
 
 
 spec:
@@ -50,6 +54,16 @@ spec:
         backend:
           service:
             name: calendar-microservice-service
+            port:
+              number: 80
+  - host: gss.info
+    http:
+      paths:
+      - path: /reservation(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: reservation-microservice-service
             port:
               number: 80
   - host: gss.info

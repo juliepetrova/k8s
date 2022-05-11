@@ -6,3 +6,4 @@ data:
   activities-db-url: activities-prisma-service
   calendar-db-url: calendar-prisma-service
   events-db-url: events-prisma-service
+  reservation-db-url: reservation-prisma-service
